@@ -1,0 +1,8 @@
+{
+	"SourceFiles": [
+		"C:\\Users\\Astro\\Documents\\Unreal Projects\\SoundSystem\\Source\\SoundSystem\\SoundSystem.Build.cs",
+		"C:\\Users\\Astro\\Documents\\Unreal Projects\\SoundSystem\\Source\\SoundSystem.Target.cs",
+		"C:\\Users\\Astro\\Documents\\Unreal Projects\\SoundSystem\\Source\\SoundSystemEditor.Target.cs"
+	],
+	"EngineVersion": "5.7.1"
+}

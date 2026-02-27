@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "SoundSystem",
+			"Path": "..\\Source\\SoundSystem.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "SoundSystemEditor",
+			"Path": "..\\Source\\SoundSystemEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
