@@ -60,7 +60,18 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			FVector position = interpolatePair(i, currentInterp);
 
-			float dtime = (currentInterp - lastInterp)/DeltaTime;
+			float dtime = (currentInterp - lastInterp);
+
+
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(
+					-1,
+					5.0f,
+					FColor::Red,
+					FString::SanitizeFloat(dtime) + FString::FromInt(i)
+				);
+			}
 
 			playbackSample(position, dtime);
 
@@ -101,7 +112,7 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time)
 
 void USoundObjectPlayer::updatePair(int i, float time)
 {	
-	float startTraveling = time- soundTrail[i].startTime;
+	float startTraveling = time - soundTrail[i].startTime;
 	float endTraveling = time - soundTrail[i].endTime;
 
 	float reletiveStart = (soundTrail[i].start - playerPosition).Length() / speedOfSound;
@@ -114,16 +125,6 @@ void USoundObjectPlayer::updatePair(int i, float time)
 	soundTrail[i].lastInterp = soundTrail[i].currentInterp;
 
 	soundTrail[i].currentInterp = startSoundTime / (startSoundTime - endSoundTime);
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			5.0f,
-			FColor::Red,
-			FString::SanitizeFloat(soundTrail[i].currentInterp) + FString::FromInt(i)
-		);
-	}
 
 }
 
