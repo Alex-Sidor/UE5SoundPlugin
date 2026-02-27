@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <None Include="..\..\.gitattributes" />
+    <None Include="..\..\.gitignore" />
     <None Include="..\..\.vsconfig" />
     <Filter Include="Config">
       <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
@@ -17,6 +19,7 @@
     <None Include="..\..\Config\DefaultInput.ini">
       <Filter>Config</Filter>
     </None>
+    <None Include="..\..\LICENSE.txt" />
     <None Include="..\..\SoundSystem.uproject" />
     <Filter Include="Source">
       <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
@@ -30,6 +33,12 @@
     <Filter Include="Source\SoundSystem">
       <UniqueIdentifier>{758FCE9A-02BF-397C-B718-90BED3ED335D}</UniqueIdentifier>
     </Filter>
+    <ClCompile Include="..\..\Source\SoundSystem\MovingActor.cpp">
+      <Filter>Source\SoundSystem</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\SoundSystem\MovingActor.h">
+      <Filter>Source\SoundSystem</Filter>
+    </ClInclude>
     <ClCompile Include="..\..\Source\SoundSystem\SoundObjectPlayer.cpp">
       <Filter>Source\SoundSystem</Filter>
     </ClCompile>

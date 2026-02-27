@@ -62,17 +62,6 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			float dtime = (currentInterp - lastInterp);
 
-
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(
-					-1,
-					5.0f,
-					FColor::Red,
-					FString::SanitizeFloat(dtime) + FString::FromInt(i)
-				);
-			}
-
 			playbackSample(position, dtime);
 
 			soundTrail[i].played = true;
@@ -139,6 +128,17 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch)
 {
 	if (AudioComponent )
 	{
+		DrawDebugSphere(
+			GetWorld(),
+			position,  // Center
+			30.0f,               // Radius
+			16,                  // Segments (higher = smoother)
+			FColor::Red,         // Color
+			false,               // Persistent
+			0.0f,                // Lifetime (0 = one frame)
+			0,                   // Depth priority
+			2.0f                 // Thickness
+		);
 
 		AudioComponent->SetWorldLocation(position);
 
