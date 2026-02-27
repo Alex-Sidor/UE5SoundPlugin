@@ -27,7 +27,7 @@ struct FSoundPair;
 // ********** End ScriptStruct FSoundPair **********************************************************
 
 // ********** Begin Class USoundObjectPlayer *******************************************************
-#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_42_RPC_WRAPPERS_NO_PURE_DECLS \
+#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_RPC_WRAPPERS_NO_PURE_DECLS \
 	DECLARE_FUNCTION(execplaybackSample); \
 	DECLARE_FUNCTION(execinterpolatePair); \
 	DECLARE_FUNCTION(execupdatePair); \
@@ -37,7 +37,7 @@ struct FSoundPair;
 struct Z_Construct_UClass_USoundObjectPlayer_Statics;
 SOUNDSYSTEM_API UClass* Z_Construct_UClass_USoundObjectPlayer_NoRegister();
 
-#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_42_INCLASS_NO_PURE_DECLS \
+#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_INCLASS_NO_PURE_DECLS \
 private: \
 	static void StaticRegisterNativesUSoundObjectPlayer(); \
 	friend struct ::Z_Construct_UClass_USoundObjectPlayer_Statics; \
@@ -48,7 +48,7 @@ public: \
 	DECLARE_SERIALIZER(USoundObjectPlayer)
 
 
-#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_42_ENHANCED_CONSTRUCTORS \
+#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_ENHANCED_CONSTRUCTORS \
 	/** Deleted move- and copy-constructors, should never be used */ \
 	USoundObjectPlayer(USoundObjectPlayer&&) = delete; \
 	USoundObjectPlayer(const USoundObjectPlayer&) = delete; \
@@ -58,13 +58,13 @@ public: \
 	NO_API virtual ~USoundObjectPlayer();
 
 
-#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_PROLOG
-#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_42_GENERATED_BODY \
+#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_36_PROLOG
+#define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_GENERATED_BODY \
 PRAGMA_DISABLE_DEPRECATION_WARNINGS \
 public: \
-	FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_42_RPC_WRAPPERS_NO_PURE_DECLS \
-	FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_42_INCLASS_NO_PURE_DECLS \
-	FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_42_ENHANCED_CONSTRUCTORS \
+	FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_RPC_WRAPPERS_NO_PURE_DECLS \
+	FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_INCLASS_NO_PURE_DECLS \
+	FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_ENHANCED_CONSTRUCTORS \
 private: \
 PRAGMA_ENABLE_DEPRECATION_WARNINGS
 

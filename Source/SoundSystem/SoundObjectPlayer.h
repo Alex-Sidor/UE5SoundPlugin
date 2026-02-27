@@ -31,9 +31,6 @@ struct FSoundPair {
 	float currentInterp = 0;
 	UPROPERTY()
 	float lastInterp = 0;
-
-	UPROPERTY()
-	bool played = false;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -74,10 +71,12 @@ private:
 	UPROPERTY()
 	FVector playerPosition = FVector::Zero();
 
+	//for creating new samples
 	UPROPERTY()
 	FVector lastPosition = FVector::Zero();
 	UPROPERTY()
 	float lastTime = 0;
+	
 
 	UFUNCTION()
 	void createTimeSample(FVector position, float time);

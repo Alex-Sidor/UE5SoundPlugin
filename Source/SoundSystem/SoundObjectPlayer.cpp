@@ -64,8 +64,6 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			playbackSample(position, dtime);
 
-			soundTrail[i].played = true;
-
 			break;
 		}
 	}
