@@ -23,7 +23,12 @@ void AMovingActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	float interpValue = (cosf(time) + 1) / 2;
+	
+	float interpValue = fmod(time,2);
+
+	if (interpValue > 1) {
+		interpValue = 2 - interpValue;
+	}
 
 	FVector position = ((endPosition - startPosition) * interpValue) + startPosition;
 
