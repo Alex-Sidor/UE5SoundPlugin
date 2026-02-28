@@ -77,6 +77,8 @@ private:
 	UPROPERTY()
 	float lastTime = 0;
 	
+	UPROPERTY()
+	float lastSample = 0;
 
 	UFUNCTION()
 	void createTimeSample(FVector position, float time);

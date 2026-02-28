@@ -23,12 +23,14 @@ void AMovingActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	time += DeltaTime * (speed/ (endPosition - startPosition).Length());
-
-	float interpValue = (sinf(time) + 1) / 2;
+	float interpValue = (cosf(time) + 1) / 2;
 
 	FVector position = ((endPosition - startPosition) * interpValue) + startPosition;
 
 	SetActorLocation(position);
+
+	time += DeltaTime * (speed/ (endPosition - startPosition).Length());
+
+
 }
 

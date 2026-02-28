@@ -28,6 +28,8 @@ void USoundObjectPlayer::BeginPlay()
     }
 
 	playerRef = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
+	lastPosition = GetComponentLocation();
 }
 
 
@@ -45,27 +47,48 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	float time = GetWorld()->GetTimeSeconds();
 
-	createTimeSample(GetComponentLocation(), time);
-	
+	if (time - lastSample > 0.0) {
+		lastSample = time;
+		createTimeSample(GetComponentLocation(), time);
+	}
+
 	//update all the cache values of all the sound trail segments
 	for (int i = 0; i < soundTrail.Num(); i++) {
 		updatePair(i, time);
 	}
 
+	bool didFindCandidate = false;
+
 	for (int i = 0; i < soundTrail.Num(); i++) {
 		float currentInterp = soundTrail[i].currentInterp;
 		float lastInterp = soundTrail[i].lastInterp;
 
-		if (0 < currentInterp && currentInterp < 1) {
+		if (0 <= currentInterp && currentInterp <= 1) {
 
 			FVector position = interpolatePair(i, currentInterp);
 
-			float dtime = (currentInterp - lastInterp);
+			/*if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(
+					-1,
+					5.0f,
+					FColor::Red,
+					FString::SanitizeFloat(currentInterp)
+				);
+			}*/
+
+			float dtime = (lastInterp - currentInterp);
 
 			playbackSample(position, dtime);
-
+			didFindCandidate = true;
 			break;
 		}
+	}
+
+
+
+	if (!didFindCandidate) {
+		playbackSample(FVector::Zero(), 0);
 	}
 
 	//remove audio samples that have finished
@@ -111,7 +134,7 @@ void USoundObjectPlayer::updatePair(int i, float time)
 
 	soundTrail[i].lastInterp = soundTrail[i].currentInterp;
 
-	soundTrail[i].currentInterp = startSoundTime / (startSoundTime - endSoundTime);
+	soundTrail[i].currentInterp = endSoundTime / (endSoundTime - startSoundTime);
 
 }
 
@@ -142,7 +165,7 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch)
 
 		FAudioParameter speedParam;
 		speedParam.ParamName = pitchParamName;
-		speedParam.FloatParam = pitch;
+		speedParam.FloatParam = log2f(pitch) * 12;
 		speedParam.ParamType = EAudioParameterType::Float;
 
 		AudioComponent->SetParameter(MoveTemp(speedParam));
