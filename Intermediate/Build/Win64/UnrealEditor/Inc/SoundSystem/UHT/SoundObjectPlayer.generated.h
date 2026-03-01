@@ -28,6 +28,7 @@ struct FSoundPair;
 
 // ********** Begin Class USoundObjectPlayer *******************************************************
 #define FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h_39_RPC_WRAPPERS_NO_PURE_DECLS \
+	DECLARE_FUNCTION(execstopSample); \
 	DECLARE_FUNCTION(execplaybackSample); \
 	DECLARE_FUNCTION(execinterpolatePair); \
 	DECLARE_FUNCTION(execupdatePair); \

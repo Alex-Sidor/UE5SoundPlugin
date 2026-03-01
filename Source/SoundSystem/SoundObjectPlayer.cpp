@@ -11,21 +11,32 @@ USoundObjectPlayer::USoundObjectPlayer()
 	PrimaryComponentTick.bCanEverTick = true;
 	//PrimaryComponentTick.TickGroup = TG_PostPhysics; //makes it only update after physics
 
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-	AudioComponent->SetupAttachment(this);
-	AudioComponent->bAutoActivate = false;
+	for (int i = 0; i < amountOfSoundPlayer; i++) {
+		FName name = *FString::Printf(TEXT("AudioComponent_%d"), i);
 
+		UAudioComponent* NewComp = CreateDefaultSubobject<UAudioComponent>(name);
+
+		if (NewComp)
+		{
+			NewComp->SetupAttachment(this);
+			NewComp->bAutoActivate = false;
+			audioComponents.Add(NewComp);
+		}
+	}
 }
 
 void USoundObjectPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	if (CurrentSound)
-    {
-        AudioComponent->SetSound(CurrentSound);
-		AudioComponent->Play();
-    }
+	for (int i = 0; i < amountOfSoundPlayer; i++) {
+		if (audioComponents[i])
+		{
+			audioComponents[i]->SetSound(CurrentSound);
+			audioComponents[i]->Play();
+			stopSample(i);
+		}
+	}
 
 	playerRef = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
@@ -57,7 +68,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		updatePair(i, time);
 	}
 
-	bool didFindCandidate = false;
+	int amountOfcandidate = 0;
 
 	for (int i = 0; i < soundTrail.Num(); i++) {
 		float currentInterp = soundTrail[i].currentInterp;
@@ -79,24 +90,19 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			float dtime = (lastInterp - currentInterp);
 
-			playbackSample(position, dtime);
-			didFindCandidate = true;
-			break;
+			playbackSample(position, dtime, amountOfcandidate);
+			
+			if (amountOfcandidate >= amountOfSoundPlayer) {
+				break;
+			}
+
+			amountOfcandidate++;
 		}
 	}
-
-
-
-	if (!didFindCandidate) {
-		playbackSample(FVector::Zero(), 0);
+	
+	for (int i = amountOfcandidate; i < amountOfSoundPlayer; i++) {
+		stopSample(i);
 	}
-
-	//remove audio samples that have finished
-	/*for (int i = soundTrail.Num() - 1; i >= 0; i--) {
-		if (soundTrail[i].played) {
-			soundTrail.RemoveAt(i);
-		}
-	}*/
 }
 
 void USoundObjectPlayer::createTimeSample(FVector position, float time)
@@ -145,9 +151,9 @@ FVector USoundObjectPlayer::interpolatePair(int i, float interp)
 	return vec;
 }
 
-void USoundObjectPlayer::playbackSample(FVector position, float pitch)
+void USoundObjectPlayer::playbackSample(FVector position, float pitch, int index)
 {
-	if (AudioComponent )
+	if (audioComponents[index])
 	{
 		DrawDebugSphere(
 			GetWorld(),
@@ -161,14 +167,28 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch)
 			2.0f                 // Thickness
 		);
 
-		AudioComponent->SetWorldLocation(position);
+		audioComponents[index]->SetWorldLocation(position);
 
 		FAudioParameter speedParam;
 		speedParam.ParamName = pitchParamName;
 		speedParam.FloatParam = log2f(pitch) * 12;
 		speedParam.ParamType = EAudioParameterType::Float;
 
-		AudioComponent->SetParameter(MoveTemp(speedParam));
+		audioComponents[index]->SetParameter(MoveTemp(speedParam));
 	}
 }
 
+void USoundObjectPlayer::stopSample(int index)
+{
+	const float stp = log2f(0) * 12;
+
+	if (audioComponents[index])
+	{
+		FAudioParameter speedParam;
+		speedParam.ParamName = pitchParamName;
+		speedParam.FloatParam = stp;
+		speedParam.ParamType = EAudioParameterType::Float;
+
+		audioComponents[index]->SetParameter(MoveTemp(speedParam));
+	}
+}

@@ -240,6 +240,7 @@ struct Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics
 	{
 		FVector position;
 		float pitch;
+		int32 index;
 	};
 #if WITH_METADATA
 	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
@@ -250,6 +251,7 @@ struct Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics
 // ********** Begin Function playbackSample constinit property declarations ************************
 	static const UECodeGen_Private::FStructPropertyParams NewProp_position;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_pitch;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_index;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
 // ********** End Function playbackSample constinit property declarations **************************
 	static const UECodeGen_Private::FFunctionParams FuncParams;
@@ -258,9 +260,11 @@ struct Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics
 // ********** Begin Function playbackSample Property Definitions ***********************************
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::NewProp_position = { "position", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(SoundObjectPlayer_eventplaybackSample_Parms, position), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::NewProp_pitch = { "pitch", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(SoundObjectPlayer_eventplaybackSample_Parms, pitch), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::NewProp_index = { "index", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(SoundObjectPlayer_eventplaybackSample_Parms, index), METADATA_PARAMS(0, nullptr) };
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::NewProp_position,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::NewProp_pitch,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::NewProp_index,
 };
 static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_USoundObjectPlayer_playbackSample_Statics::PropPointers) < 2048);
 // ********** End Function playbackSample Property Definitions *************************************
@@ -282,12 +286,64 @@ DEFINE_FUNCTION(USoundObjectPlayer::execplaybackSample)
 {
 	P_GET_STRUCT(FVector,Z_Param_position);
 	P_GET_PROPERTY(FFloatProperty,Z_Param_pitch);
+	P_GET_PROPERTY(FIntProperty,Z_Param_index);
 	P_FINISH;
 	P_NATIVE_BEGIN;
-	P_THIS->playbackSample(Z_Param_position,Z_Param_pitch);
+	P_THIS->playbackSample(Z_Param_position,Z_Param_pitch,Z_Param_index);
 	P_NATIVE_END;
 }
 // ********** End Class USoundObjectPlayer Function playbackSample *********************************
+
+// ********** Begin Class USoundObjectPlayer Function stopSample ***********************************
+struct Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics
+{
+	struct SoundObjectPlayer_eventstopSample_Parms
+	{
+		int32 index;
+	};
+#if WITH_METADATA
+	static constexpr UECodeGen_Private::FMetaDataPairParam Function_MetaDataParams[] = {
+		{ "ModuleRelativePath", "SoundObjectPlayer.h" },
+	};
+#endif // WITH_METADATA
+
+// ********** Begin Function stopSample constinit property declarations ****************************
+	static const UECodeGen_Private::FIntPropertyParams NewProp_index;
+	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
+// ********** End Function stopSample constinit property declarations ******************************
+	static const UECodeGen_Private::FFunctionParams FuncParams;
+};
+
+// ********** Begin Function stopSample Property Definitions ***************************************
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::NewProp_index = { "index", nullptr, (EPropertyFlags)0x0010000000000080, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(SoundObjectPlayer_eventstopSample_Parms, index), METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::PropPointers[] = {
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::NewProp_index,
+};
+static_assert(UE_ARRAY_COUNT(Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::PropPointers) < 2048);
+// ********** End Function stopSample Property Definitions *****************************************
+const UECodeGen_Private::FFunctionParams Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::FuncParams = { { (UObject*(*)())Z_Construct_UClass_USoundObjectPlayer, nullptr, "stopSample", 	Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::PropPointers, 
+	UE_ARRAY_COUNT(Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::PropPointers), 
+sizeof(Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::SoundObjectPlayer_eventstopSample_Parms),
+RF_Public|RF_Transient|RF_MarkAsNative, (EFunctionFlags)0x00040401, 0, 0, METADATA_PARAMS(UE_ARRAY_COUNT(Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::Function_MetaDataParams), Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::Function_MetaDataParams)},  };
+static_assert(sizeof(Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::SoundObjectPlayer_eventstopSample_Parms) < MAX_uint16);
+UFunction* Z_Construct_UFunction_USoundObjectPlayer_stopSample()
+{
+	static UFunction* ReturnFunction = nullptr;
+	if (!ReturnFunction)
+	{
+		UECodeGen_Private::ConstructUFunction(&ReturnFunction, Z_Construct_UFunction_USoundObjectPlayer_stopSample_Statics::FuncParams);
+	}
+	return ReturnFunction;
+}
+DEFINE_FUNCTION(USoundObjectPlayer::execstopSample)
+{
+	P_GET_PROPERTY(FIntProperty,Z_Param_index);
+	P_FINISH;
+	P_NATIVE_BEGIN;
+	P_THIS->stopSample(Z_Param_index);
+	P_NATIVE_END;
+}
+// ********** End Class USoundObjectPlayer Function stopSample *************************************
 
 // ********** Begin Class USoundObjectPlayer Function updatePair ***********************************
 struct Z_Construct_UFunction_USoundObjectPlayer_updatePair_Statics
@@ -393,9 +449,8 @@ struct Z_Construct_UClass_USoundObjectPlayer_Statics
 		{ "Category", "SoundObjectPlayer" },
 		{ "ModuleRelativePath", "SoundObjectPlayer.h" },
 	};
-	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_AudioComponent_MetaData[] = {
-		{ "Category", "Audio" },
-		{ "EditInline", "true" },
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_amountOfSoundPlayer_MetaData[] = {
+		{ "Category", "SoundObjectPlayer" },
 		{ "ModuleRelativePath", "SoundObjectPlayer.h" },
 	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_CurrentSound_MetaData[] = {
@@ -427,6 +482,10 @@ struct Z_Construct_UClass_USoundObjectPlayer_Statics
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_lastSample_MetaData[] = {
 		{ "ModuleRelativePath", "SoundObjectPlayer.h" },
 	};
+	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_audioComponents_MetaData[] = {
+		{ "EditInline", "true" },
+		{ "ModuleRelativePath", "SoundObjectPlayer.h" },
+	};
 	static constexpr UECodeGen_Private::FMetaDataPairParam NewProp_soundTrail_MetaData[] = {
 		{ "ModuleRelativePath", "SoundObjectPlayer.h" },
 	};
@@ -435,7 +494,7 @@ struct Z_Construct_UClass_USoundObjectPlayer_Statics
 // ********** Begin Class USoundObjectPlayer constinit property declarations ***********************
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_speedOfSound;
 	static const UECodeGen_Private::FIntPropertyParams NewProp_maxSoundSamples;
-	static const UECodeGen_Private::FObjectPropertyParams NewProp_AudioComponent;
+	static const UECodeGen_Private::FIntPropertyParams NewProp_amountOfSoundPlayer;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_CurrentSound;
 	static const UECodeGen_Private::FNamePropertyParams NewProp_pitchParamName;
 	static const UECodeGen_Private::FObjectPropertyParams NewProp_playerRef;
@@ -443,6 +502,8 @@ struct Z_Construct_UClass_USoundObjectPlayer_Statics
 	static const UECodeGen_Private::FStructPropertyParams NewProp_lastPosition;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_lastTime;
 	static const UECodeGen_Private::FFloatPropertyParams NewProp_lastSample;
+	static const UECodeGen_Private::FObjectPropertyParams NewProp_audioComponents_Inner;
+	static const UECodeGen_Private::FArrayPropertyParams NewProp_audioComponents;
 	static const UECodeGen_Private::FStructPropertyParams NewProp_soundTrail_Inner;
 	static const UECodeGen_Private::FArrayPropertyParams NewProp_soundTrail;
 	static const UECodeGen_Private::FPropertyParamsBase* const PropPointers[];
@@ -451,13 +512,15 @@ struct Z_Construct_UClass_USoundObjectPlayer_Statics
 		{ .NameUTF8 = UTF8TEXT("createTimeSample"), .Pointer = &USoundObjectPlayer::execcreateTimeSample },
 		{ .NameUTF8 = UTF8TEXT("interpolatePair"), .Pointer = &USoundObjectPlayer::execinterpolatePair },
 		{ .NameUTF8 = UTF8TEXT("playbackSample"), .Pointer = &USoundObjectPlayer::execplaybackSample },
+		{ .NameUTF8 = UTF8TEXT("stopSample"), .Pointer = &USoundObjectPlayer::execstopSample },
 		{ .NameUTF8 = UTF8TEXT("updatePair"), .Pointer = &USoundObjectPlayer::execupdatePair },
 	};
 	static UObject* (*const DependentSingletons[])();
 	static constexpr FClassFunctionLinkInfo FuncInfo[] = {
 		{ &Z_Construct_UFunction_USoundObjectPlayer_createTimeSample, "createTimeSample" }, // 2947389066
 		{ &Z_Construct_UFunction_USoundObjectPlayer_interpolatePair, "interpolatePair" }, // 140721000
-		{ &Z_Construct_UFunction_USoundObjectPlayer_playbackSample, "playbackSample" }, // 2518064199
+		{ &Z_Construct_UFunction_USoundObjectPlayer_playbackSample, "playbackSample" }, // 2037062999
+		{ &Z_Construct_UFunction_USoundObjectPlayer_stopSample, "stopSample" }, // 1426652259
 		{ &Z_Construct_UFunction_USoundObjectPlayer_updatePair, "updatePair" }, // 3294788586
 	};
 	static_assert(UE_ARRAY_COUNT(FuncInfo) < 2048);
@@ -470,7 +533,7 @@ struct Z_Construct_UClass_USoundObjectPlayer_Statics
 // ********** Begin Class USoundObjectPlayer Property Definitions **********************************
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_speedOfSound = { "speedOfSound", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, speedOfSound), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_speedOfSound_MetaData), NewProp_speedOfSound_MetaData) };
 const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_maxSoundSamples = { "maxSoundSamples", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, maxSoundSamples), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_maxSoundSamples_MetaData), NewProp_maxSoundSamples_MetaData) };
-const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_AudioComponent = { "AudioComponent", nullptr, (EPropertyFlags)0x00100000000a001d, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, AudioComponent), Z_Construct_UClass_UAudioComponent_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_AudioComponent_MetaData), NewProp_AudioComponent_MetaData) };
+const UECodeGen_Private::FIntPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_amountOfSoundPlayer = { "amountOfSoundPlayer", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Int, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, amountOfSoundPlayer), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_amountOfSoundPlayer_MetaData), NewProp_amountOfSoundPlayer_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_CurrentSound = { "CurrentSound", nullptr, (EPropertyFlags)0x0010000000000005, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, CurrentSound), Z_Construct_UClass_USoundBase_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_CurrentSound_MetaData), NewProp_CurrentSound_MetaData) };
 const UECodeGen_Private::FNamePropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_pitchParamName = { "pitchParamName", nullptr, (EPropertyFlags)0x0010000000000001, UECodeGen_Private::EPropertyGenFlags::Name, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, pitchParamName), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_pitchParamName_MetaData), NewProp_pitchParamName_MetaData) };
 const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_playerRef = { "playerRef", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, playerRef), Z_Construct_UClass_AActor_NoRegister, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_playerRef_MetaData), NewProp_playerRef_MetaData) };
@@ -478,12 +541,14 @@ const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_USoundObjectPl
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_lastPosition = { "lastPosition", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, lastPosition), Z_Construct_UScriptStruct_FVector, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_lastPosition_MetaData), NewProp_lastPosition_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_lastTime = { "lastTime", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, lastTime), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_lastTime_MetaData), NewProp_lastTime_MetaData) };
 const UECodeGen_Private::FFloatPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_lastSample = { "lastSample", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Float, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, lastSample), METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_lastSample_MetaData), NewProp_lastSample_MetaData) };
+const UECodeGen_Private::FObjectPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_audioComponents_Inner = { "audioComponents", nullptr, (EPropertyFlags)0x0000000000080008, UECodeGen_Private::EPropertyGenFlags::Object, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UClass_UAudioComponent_NoRegister, METADATA_PARAMS(0, nullptr) };
+const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_audioComponents = { "audioComponents", nullptr, (EPropertyFlags)0x0040008000000008, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, audioComponents), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_audioComponents_MetaData), NewProp_audioComponents_MetaData) };
 const UECodeGen_Private::FStructPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_soundTrail_Inner = { "soundTrail", nullptr, (EPropertyFlags)0x0000000000000000, UECodeGen_Private::EPropertyGenFlags::Struct, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, 0, Z_Construct_UScriptStruct_FSoundPair, METADATA_PARAMS(0, nullptr) }; // 139584538
 const UECodeGen_Private::FArrayPropertyParams Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_soundTrail = { "soundTrail", nullptr, (EPropertyFlags)0x0040000000000000, UECodeGen_Private::EPropertyGenFlags::Array, RF_Public|RF_Transient|RF_MarkAsNative, nullptr, nullptr, 1, STRUCT_OFFSET(USoundObjectPlayer, soundTrail), EArrayPropertyFlags::None, METADATA_PARAMS(UE_ARRAY_COUNT(NewProp_soundTrail_MetaData), NewProp_soundTrail_MetaData) }; // 139584538
 const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_USoundObjectPlayer_Statics::PropPointers[] = {
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_speedOfSound,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_maxSoundSamples,
-	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_AudioComponent,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_amountOfSoundPlayer,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_CurrentSound,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_pitchParamName,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_playerRef,
@@ -491,6 +556,8 @@ const UECodeGen_Private::FPropertyParamsBase* const Z_Construct_UClass_USoundObj
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_lastPosition,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_lastTime,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_lastSample,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_audioComponents_Inner,
+	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_audioComponents,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_soundTrail_Inner,
 	(const UECodeGen_Private::FPropertyParamsBase*)&Z_Construct_UClass_USoundObjectPlayer_Statics::NewProp_soundTrail,
 };
@@ -540,10 +607,10 @@ struct Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSyst
 		{ FSoundPair::StaticStruct, Z_Construct_UScriptStruct_FSoundPair_Statics::NewStructOps, TEXT("SoundPair"),&Z_Registration_Info_UScriptStruct_FSoundPair, CONSTRUCT_RELOAD_VERSION_INFO(FStructReloadVersionInfo, sizeof(FSoundPair), 139584538U) },
 	};
 	static constexpr FClassRegisterCompiledInInfo ClassInfo[] = {
-		{ Z_Construct_UClass_USoundObjectPlayer, USoundObjectPlayer::StaticClass, TEXT("USoundObjectPlayer"), &Z_Registration_Info_UClass_USoundObjectPlayer, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(USoundObjectPlayer), 727112659U) },
+		{ Z_Construct_UClass_USoundObjectPlayer, USoundObjectPlayer::StaticClass, TEXT("USoundObjectPlayer"), &Z_Registration_Info_UClass_USoundObjectPlayer, CONSTRUCT_RELOAD_VERSION_INFO(FClassReloadVersionInfo, sizeof(USoundObjectPlayer), 1443788266U) },
 	};
 }; // Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h__Script_SoundSystem_Statics 
-static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h__Script_SoundSystem_2482929685{
+static FRegisterCompiledInInfo Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h__Script_SoundSystem_1644171177{
 	TEXT("/Script/SoundSystem"),
 	Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h__Script_SoundSystem_Statics::ClassInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h__Script_SoundSystem_Statics::ClassInfo),
 	Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h__Script_SoundSystem_Statics::ScriptStructInfo, UE_ARRAY_COUNT(Z_CompiledInDeferFile_FID_Users_Astro_Documents_Unreal_Projects_SoundSystem_Source_SoundSystem_SoundObjectPlayer_h__Script_SoundSystem_Statics::ScriptStructInfo),

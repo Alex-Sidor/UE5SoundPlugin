@@ -54,8 +54,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	int maxSoundSamples = 50;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Audio")
-	UAudioComponent* AudioComponent;
+	UPROPERTY(EditAnywhere)
+	int amountOfSoundPlayer = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	USoundBase* CurrentSound;
@@ -74,6 +74,7 @@ private:
 	//for creating new samples
 	UPROPERTY()
 	FVector lastPosition = FVector::Zero();
+
 	UPROPERTY()
 	float lastTime = 0;
 	
@@ -89,9 +90,14 @@ private:
 	UFUNCTION()
 	FVector interpolatePair(int i, float interp);
 
+	UPROPERTY()
+	TArray <UAudioComponent*> audioComponents;
 
 	UFUNCTION()
-	void playbackSample(FVector position, float pitch);
+	void playbackSample(FVector position, float pitch, int index);
+
+	UFUNCTION()
+	void stopSample(int index);
 
 	UPROPERTY()
 	TArray<FSoundPair> soundTrail;
