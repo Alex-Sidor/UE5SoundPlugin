@@ -99,6 +99,11 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		}
 	}
 
+	//mute the rest of the samples that are not playing
+	for (int i = amountOfcandidate; i < amountOfSoundPlayer; i++) {
+		stopSample(i);
+	}
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(
@@ -107,10 +112,6 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			FColor::Red,
 			FString::FromInt(amountOfcandidate)
 		);
-	}
-	
-	for (int i = amountOfcandidate; i < amountOfSoundPlayer; i++) {
-		stopSample(i);
 	}
 }
 
