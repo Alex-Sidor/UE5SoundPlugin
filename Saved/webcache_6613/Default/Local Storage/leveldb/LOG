@@ -1,3 +1,5 @@
-2026/03/14-12:54:13.720 39fc Reusing MANIFEST C:\Users\Astro\Documents\Unreal Projects\SoundSystem\Saved\webcache_6613\Default\Local Storage\leveldb/MANIFEST-000001
-2026/03/14-12:54:13.735 39fc Recovering log #20
-2026/03/14-12:54:13.738 39fc Reusing old log C:\Users\Astro\Documents\Unreal Projects\SoundSystem\Saved\webcache_6613\Default\Local Storage\leveldb/000020.log 
+2026/03/14-12:56:17.528 3bb8 Reusing MANIFEST C:\Users\Astro\Documents\Unreal Projects\SoundSystem\Saved\webcache_6613\Default\Local Storage\leveldb/MANIFEST-000001
+2026/03/14-12:56:17.538 3bb8 Recovering log #20
+2026/03/14-12:56:17.541 3bb8 Level-0 table #23: started
+2026/03/14-12:56:17.550 3bb8 Level-0 table #23: 70525 bytes OK
+2026/03/14-12:56:17.555 3bb8 Delete type=0 #20

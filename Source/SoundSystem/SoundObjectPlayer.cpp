@@ -56,15 +56,10 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	float time = GetWorld()->GetTimeSeconds();
 
+	updateCurrentSample(GetComponentLocation(), time); //passive sample recording
 	if (time - lastSample > 0.0) {
 		lastSample = time;
 		createTimeSample(GetComponentLocation(), time);
-	}
-	
-	if (soundTrail.Num() > 0) {
-		//update the sample currently being recorded
-
-
 	}
 
 	//update all the cache values of all the sound trail segments
@@ -183,7 +178,7 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch, int index
 		DrawDebugSphere(
 			GetWorld(),
 			position,  // Center
-			30.0f,               // Radius
+			500.0f,               // Radius
 			16,                  // Segments (higher = smoother)
 			FColor::Red,         // Color
 			false,               // Persistent
