@@ -76,13 +76,13 @@ private:
 	FVector lastPosition = FVector::Zero();
 
 	UPROPERTY()
-	float lastTime = 0;
-	
-	UPROPERTY()
-	float lastSample = 0;
+	float lastSample = 0.0f;
 
 	UFUNCTION()
 	void createTimeSample(FVector position, float time);
+
+	UFUNCTION()
+	void updateCurrentSample(FVector position, float time);
 
 	UFUNCTION()
 	void updatePair(int i, float time);

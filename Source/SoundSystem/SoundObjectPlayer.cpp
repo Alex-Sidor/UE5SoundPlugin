@@ -39,8 +39,6 @@ void USoundObjectPlayer::BeginPlay()
 	}
 
 	playerRef = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-
-	lastPosition = GetComponentLocation();
 }
 
 
@@ -61,6 +59,12 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	if (time - lastSample > 0.0) {
 		lastSample = time;
 		createTimeSample(GetComponentLocation(), time);
+	}
+	
+	if (soundTrail.Num() > 0) {
+		//update the sample currently being recorded
+
+
 	}
 
 	//update all the cache values of all the sound trail segments
@@ -99,6 +103,16 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			amountOfcandidate++;
 		}
 	}
+
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			5.0f,
+			FColor::Red,
+			FString::FromInt(amountOfcandidate)
+		);
+	}
 	
 	for (int i = amountOfcandidate; i < amountOfSoundPlayer; i++) {
 		stopSample(i);
@@ -114,16 +128,27 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time)
 
 	FSoundPair sp;
 
+	//these never change
+	sp.start = position;
+	sp.startTime = time;
+
+	//set default values (difference is 0 so this sample has 0 length)
 	sp.end = position;
 	sp.endTime = time;
 
-	sp.start = lastPosition;
-	sp.startTime = lastTime;
-
-	lastPosition = position;
-	lastTime = time;
-
 	soundTrail.Add(sp);
+}
+
+void USoundObjectPlayer::updateCurrentSample(FVector position, float time)
+{
+	int amount = soundTrail.Num() - 1;
+
+	if (amount >= 0) {
+
+		//update recording value (allows to playback sample if its still recording)
+		soundTrail[amount].end = position;
+		soundTrail[amount].endTime = time;
+	}
 }
 
 void USoundObjectPlayer::updatePair(int i, float time)

@@ -32,6 +32,7 @@ struct FSoundPair;
 	DECLARE_FUNCTION(execplaybackSample); \
 	DECLARE_FUNCTION(execinterpolatePair); \
 	DECLARE_FUNCTION(execupdatePair); \
+	DECLARE_FUNCTION(execupdateCurrentSample); \
 	DECLARE_FUNCTION(execcreateTimeSample);
 
 
