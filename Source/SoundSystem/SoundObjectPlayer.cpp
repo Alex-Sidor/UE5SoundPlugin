@@ -77,7 +77,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			FVector position = interpolatePair(i, currentInterp);
 
-			/*if (GEngine)
+			if (GEngine)
 			{
 				GEngine->AddOnScreenDebugMessage(
 					-1,
@@ -85,7 +85,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 					FColor::Red,
 					FString::SanitizeFloat(currentInterp)
 				);
-			}*/
+			}
 
 			float dtime = (lastInterp - currentInterp);
 
@@ -110,7 +110,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			-1,
 			5.0f,
 			FColor::Red,
-			FString::FromInt(amountOfcandidate)
+			TEXT("")
 		);
 	}
 }
