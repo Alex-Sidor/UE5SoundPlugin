@@ -132,7 +132,7 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time)
 {
 
 	if (soundTrail.Num() >= maxSoundSamples && soundTrail.Num() != 0) {
-		soundTrail.RemoveAt(0, 1, false);
+		soundTrail.RemoveAt(0, EAllowShrinking::No);
 	}
 
 	FSoundPair sp;
