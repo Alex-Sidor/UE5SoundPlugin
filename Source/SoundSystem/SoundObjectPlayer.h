@@ -52,7 +52,10 @@ public:
 	float speedOfSound = 343;
 
 	UPROPERTY(EditAnywhere)
-	int maxSoundSamples = 50;
+	float samplePollingFrequency = 10.0f;
+
+	UPROPERTY(EditAnywhere)
+	float maxAttenuationDistance = 300.0f;
 
 	UPROPERTY(EditAnywhere)
 	int amountOfSoundPlayer = 10;
@@ -64,6 +67,12 @@ public:
 	FName pitchParamName = TEXT("pitch");
 
 private:
+
+	UPROPERTY()
+	float sampleTimeInterval = 0.0f;
+
+	UPROPERTY()
+	int maxSoundSamples = 50;
 
 	UPROPERTY()
 	AActor* playerRef = nullptr;

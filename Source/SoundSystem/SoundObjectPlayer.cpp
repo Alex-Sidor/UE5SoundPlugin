@@ -11,6 +11,17 @@ USoundObjectPlayer::USoundObjectPlayer()
 	PrimaryComponentTick.bCanEverTick = true;
 	//PrimaryComponentTick.TickGroup = TG_PostPhysics; //makes it only update after physics
 
+	if (samplePollingFrequency == 0.0f) {
+		sampleTimeInterval = 10.0f;
+	}
+	else {
+		sampleTimeInterval = 1 / samplePollingFrequency;
+	}
+
+	float sampleLifeLength = maxAttenuationDistance / speedOfSound;
+
+	maxSoundSamples = sampleLifeLength / sampleTimeInterval;
+	
 	for (int i = 0; i < amountOfSoundPlayer; i++) {
 		FName name = *FString::Printf(TEXT("AudioComponent_%d"), i);
 
@@ -57,7 +68,9 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	float time = GetWorld()->GetTimeSeconds();
 
 	updateCurrentSample(GetComponentLocation(), time); //passive sample recording
-	if (time - lastSample > 0.0) {
+	
+	
+	if (time - lastSample > sampleTimeInterval) {//record a sample every x amount of time
 		lastSample = time;
 		createTimeSample(GetComponentLocation(), time);
 	}
