@@ -91,11 +91,11 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			playbackSample(position, dtime, amountOfcandidate);
 			
+			amountOfcandidate++;
+
 			if (amountOfcandidate >= amountOfSoundPlayer) {
 				break;
 			}
-
-			amountOfcandidate++;
 		}
 	}
 
