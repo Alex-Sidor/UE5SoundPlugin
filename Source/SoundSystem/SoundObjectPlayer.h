@@ -85,6 +85,10 @@ private:
 	FVector lastPosition = FVector::Zero();
 
 	UPROPERTY()
+	float lastTime = 0;
+	//------------
+
+	UPROPERTY()
 	float lastSample = 0.0f;
 
 	UFUNCTION()

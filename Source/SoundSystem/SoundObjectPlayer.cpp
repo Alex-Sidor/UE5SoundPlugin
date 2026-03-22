@@ -10,17 +10,6 @@ USoundObjectPlayer::USoundObjectPlayer()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	//PrimaryComponentTick.TickGroup = TG_PostPhysics; //makes it only update after physics
-
-	if (samplePollingFrequency == 0.0f) {
-		sampleTimeInterval = 10.0f;
-	}
-	else {
-		sampleTimeInterval = 1 / samplePollingFrequency;
-	}
-
-	float sampleLifeLength = maxAttenuationDistance / speedOfSound;
-
-	maxSoundSamples = sampleLifeLength / sampleTimeInterval;
 	
 	for (int i = 0; i < amountOfSoundPlayer; i++) {
 		FName name = *FString::Printf(TEXT("AudioComponent_%d"), i);
@@ -39,6 +28,17 @@ USoundObjectPlayer::USoundObjectPlayer()
 void USoundObjectPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (samplePollingFrequency == 0.0f) {
+		sampleTimeInterval = 0.0f;
+	}
+	else {
+		sampleTimeInterval = 1.0f / samplePollingFrequency;
+	}
+
+	float sampleLifeLength = maxAttenuationDistance / speedOfSound;
+
+	maxSoundSamples = sampleLifeLength / sampleTimeInterval;
 	
 	for (int i = 0; i < amountOfSoundPlayer; i++) {
 		if (audioComponents[i])
@@ -66,11 +66,9 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	}
 
 	float time = GetWorld()->GetTimeSeconds();
-
-	updateCurrentSample(GetComponentLocation(), time); //passive sample recording
 	
 	
-	if (time - lastSample > sampleTimeInterval) {//record a sample every x amount of time
+	if (time - lastSample > sampleTimeInterval) {//create a new sample every x amount of time
 		lastSample = time;
 		createTimeSample(GetComponentLocation(), time);
 	}
@@ -90,17 +88,17 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 			FVector position = interpolatePair(i, currentInterp);
 
+			float dtime = (lastInterp - currentInterp);
+
 			if (GEngine)
 			{
 				GEngine->AddOnScreenDebugMessage(
 					-1,
 					5.0f,
 					FColor::Red,
-					FString::SanitizeFloat(currentInterp)
+					FString::SanitizeFloat(dtime)
 				);
 			}
-
-			float dtime = (lastInterp - currentInterp);
 
 			playbackSample(position, dtime, amountOfcandidate);
 			
@@ -117,15 +115,15 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		stopSample(i);
 	}
 
-	if (GEngine)
+	/*if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(
 			-1,
 			5.0f,
 			FColor::Red,
-			TEXT("")
+			FString::FromInt(amountOfcandidate)
 		);
-	}
+	}*/
 }
 
 void USoundObjectPlayer::createTimeSample(FVector position, float time)
@@ -138,12 +136,16 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time)
 	FSoundPair sp;
 
 	//these never change
-	sp.start = position;
-	sp.startTime = time;
+	sp.start = lastPosition;
+	sp.startTime = lastTime;
 
 	//set default values (difference is 0 so this sample has 0 length)
 	sp.end = position;
 	sp.endTime = time;
+
+
+	lastPosition = position;
+	lastTime = time;
 
 	soundTrail.Add(sp);
 }
