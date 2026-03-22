@@ -44,8 +44,7 @@ void USoundObjectPlayer::BeginPlay()
 		if (audioComponents[i])
 		{
 			audioComponents[i]->SetSound(CurrentSound);
-			audioComponents[i]->Play();
-			stopSample(i);
+			audioComponents[i]->Stop();
 		}
 	}
 
@@ -96,7 +95,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	//mute the rest of the samples that are not playing
 	for (int i = amountOfcandidate; i < amountOfSoundPlayer; i++) {
-		stopSample(i);
+		audioComponents[i]->Stop();
 	}
 
 	/*if (GEngine)
@@ -161,6 +160,12 @@ void USoundObjectPlayer::updatePair(int i, float time)
 	float reletiveStart = (soundTrail[i].start - playerPosition).Length() / speedOfSound; //how long in seconds it would take for each sample to reach the listener
 	float reletiveEnd = (soundTrail[i].end - playerPosition).Length() / speedOfSound;
 
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		5.0f,
+		FColor::Red,
+		FString::SanitizeFloat(reletiveStart)
+	);
 
 	float startSoundTime = reletiveStart - startTraveling; //the amount of time in seconds (till/after) reaching the listener
 	float endSoundTime = reletiveEnd - endTraveling;
@@ -210,24 +215,11 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch, int index
 
 		audioComponents[index]->SetWorldLocation(position);
 
+		audioComponents[index]->Play();
+
 		FAudioParameter speedParam;
 		speedParam.ParamName = pitchParamName;
 		speedParam.FloatParam = log2f(pitch) * 12;
-		speedParam.ParamType = EAudioParameterType::Float;
-
-		audioComponents[index]->SetParameter(MoveTemp(speedParam));
-	}
-}
-
-void USoundObjectPlayer::stopSample(int index)
-{
-	const float stp = log2f(0) * 12;
-
-	if (audioComponents[index])
-	{
-		FAudioParameter speedParam;
-		speedParam.ParamName = pitchParamName;
-		speedParam.FloatParam = stp;
 		speedParam.ParamType = EAudioParameterType::Float;
 
 		audioComponents[index]->SetParameter(MoveTemp(speedParam));

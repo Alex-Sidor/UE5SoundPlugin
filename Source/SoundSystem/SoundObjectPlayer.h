@@ -112,9 +112,6 @@ private:
 	UFUNCTION()
 	void playbackSample(FVector position, float pitch, int index);
 
-	UFUNCTION()
-	void stopSample(int index);
-
 	UPROPERTY()
 	TArray<FSoundPair> soundTrail;
 };
