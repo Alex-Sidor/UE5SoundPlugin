@@ -44,7 +44,8 @@ void USoundObjectPlayer::BeginPlay()
 		if (audioComponents[i])
 		{
 			audioComponents[i]->SetSound(CurrentSound);
-			audioComponents[i]->Stop();
+			audioComponents[i]->Play();
+			audioComponents[i]->SetVolumeMultiplier(0.0f);
 		}
 	}
 
@@ -95,7 +96,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	//mute the rest of the samples that are not playing
 	for (int i = amountOfcandidate; i < amountOfSoundPlayer; i++) {
-		audioComponents[i]->Stop();
+		audioComponents[i]->SetVolumeMultiplier(0.0f);
 	}
 
 	/*if (GEngine)
@@ -215,13 +216,13 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch, int index
 
 		audioComponents[index]->SetWorldLocation(position);
 
-		audioComponents[index]->Play();
-
 		FAudioParameter speedParam;
 		speedParam.ParamName = pitchParamName;
 		speedParam.FloatParam = log2f(pitch) * 12;
 		speedParam.ParamType = EAudioParameterType::Float;
 
 		audioComponents[index]->SetParameter(MoveTemp(speedParam));
+
+		audioComponents[index]->SetVolumeMultiplier(1.0f);
 	}
 }
