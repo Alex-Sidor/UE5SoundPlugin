@@ -95,9 +95,6 @@ private:
 	void createTimeSample(FVector position, float time);
 
 	UFUNCTION()
-	void updateCurrentSample(FVector position, float time);
-
-	UFUNCTION()
 	void updatePairs(float time);
 
 	UFUNCTION()

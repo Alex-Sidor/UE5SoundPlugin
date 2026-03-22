@@ -134,18 +134,6 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time)
 	soundTrail.Add(sp);
 }
 
-void USoundObjectPlayer::updateCurrentSample(FVector position, float time)
-{
-	int amount = soundTrail.Num() - 1;
-
-	if (amount >= 0) {
-
-		//update recording value (allows to playback sample if its still recording)
-		soundTrail[amount].end = position;
-		soundTrail[amount].endTime = time;
-	}
-}
-
 void USoundObjectPlayer::updatePairs(float time)
 {
 	for (int i = 0; i < soundTrail.Num(); i++) {
@@ -164,12 +152,12 @@ void USoundObjectPlayer::updatePair(int i, float time)
 	float startSoundTime = reletiveStart - startTraveling; //the amount of time in seconds (till/after) reaching the listener
 	float endSoundTime = reletiveEnd - endTraveling;
 
-	GEngine->AddOnScreenDebugMessage(
+	/*GEngine->AddOnScreenDebugMessage(
 		-1,
 		5.0f,
 		FColor::Red,
 		FString::SanitizeFloat(startSoundTime)
-	);
+	);*/
 
 	soundTrail[i].lastInterp = soundTrail[i].currentInterp; 
 
