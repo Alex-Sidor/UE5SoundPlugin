@@ -72,10 +72,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		createTimeSample(GetComponentLocation(), time);
 	}
 
-	//update all the cache values of all the sound trail segments
-	for (int i = 0; i < soundTrail.Num(); i++) {
-		updatePair(i, time);
-	}
+	updatePairs(time); //update the cache values of all sound segments
 
 	int amountOfcandidate = 0;
 
@@ -85,24 +82,12 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 		if (0 <= currentInterp && currentInterp <= 1) {
 
+			float dtime = (currentInterp - lastInterp);
+
 			FVector position = interpolatePair(i, currentInterp);
-
-			float dtime = (lastInterp - currentInterp);
-
-			if (GEngine)
-			{
-				GEngine->AddOnScreenDebugMessage(
-					-1,
-					5.0f,
-					FColor::Red,
-					FString::SanitizeFloat(dtime)
-				);
-			}
-
 			playbackSample(position, dtime, amountOfcandidate);
 			
 			amountOfcandidate++;
-
 			if (amountOfcandidate >= amountOfSoundPlayer) {
 				break;
 			}
@@ -161,21 +146,32 @@ void USoundObjectPlayer::updateCurrentSample(FVector position, float time)
 	}
 }
 
+void USoundObjectPlayer::updatePairs(float time)
+{
+	for (int i = 0; i < soundTrail.Num(); i++) {
+		updatePair(i, time);
+	}
+}
+
 void USoundObjectPlayer::updatePair(int i, float time)
 {	
-	float startTraveling = time - soundTrail[i].startTime;
+	float startTraveling = time - soundTrail[i].startTime; //how long in seconds have the sample points been travelling towards the audio listener
 	float endTraveling = time - soundTrail[i].endTime;
 
-	float reletiveStart = (soundTrail[i].start - playerPosition).Length() / speedOfSound;
+	float reletiveStart = (soundTrail[i].start - playerPosition).Length() / speedOfSound; //how long in seconds it would take for each sample to reach the listener
 	float reletiveEnd = (soundTrail[i].end - playerPosition).Length() / speedOfSound;
 
 
-	float startSoundTime = reletiveStart - startTraveling;
+	float startSoundTime = reletiveStart - startTraveling; //the amount of time in seconds (till/after) reaching the listener
 	float endSoundTime = reletiveEnd - endTraveling;
 
-	soundTrail[i].lastInterp = soundTrail[i].currentInterp;
+	soundTrail[i].lastInterp = soundTrail[i].currentInterp; 
 
-	soundTrail[i].currentInterp = endSoundTime / (endSoundTime - startSoundTime);
+	// (end - start)*currentInterp + start == 0
+	// -start/(end-start) = currentInterp
+	// start / (start - end )
+
+	soundTrail[i].currentInterp = startSoundTime / (startSoundTime - endSoundTime);
 
 }
 
@@ -190,17 +186,27 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch, int index
 {
 	if (audioComponents[index])
 	{
-		DrawDebugSphere(
-			GetWorld(),
-			position,  // Center
-			500.0f,               // Radius
-			16,                  // Segments (higher = smoother)
-			FColor::Red,         // Color
-			false,               // Persistent
-			0.0f,                // Lifetime (0 = one frame)
-			0,                   // Depth priority
-			2.0f                 // Thickness
-		);
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				5.0f,
+				FColor::Red,
+				FString::SanitizeFloat(pitch)
+			);
+
+			DrawDebugSphere(
+				GetWorld(),
+				position,
+				500.0f,
+				16,
+				FColor::Red,
+				false,
+				0.0f,
+				0,
+				2.0f
+			);
+		}
 
 		audioComponents[index]->SetWorldLocation(position);
 

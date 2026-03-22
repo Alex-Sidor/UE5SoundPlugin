@@ -98,6 +98,9 @@ private:
 	void updateCurrentSample(FVector position, float time);
 
 	UFUNCTION()
+	void updatePairs(float time);
+
+	UFUNCTION()
 	void updatePair(int i, float time);
 
 	UFUNCTION()
