@@ -30,7 +30,7 @@ void USoundObjectPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	if (samplePollingFrequency == 0.0f) {
-		sampleTimeInterval = 0.0f;
+		sampleTimeInterval = 0.1f;
 	}
 	else {
 		sampleTimeInterval = 1.0f / samplePollingFrequency;
