@@ -161,15 +161,15 @@ void USoundObjectPlayer::updatePair(int i, float time)
 	float reletiveStart = (soundTrail[i].start - playerPosition).Length() / speedOfSound; //how long in seconds it would take for each sample to reach the listener
 	float reletiveEnd = (soundTrail[i].end - playerPosition).Length() / speedOfSound;
 
+	float startSoundTime = reletiveStart - startTraveling; //the amount of time in seconds (till/after) reaching the listener
+	float endSoundTime = reletiveEnd - endTraveling;
+
 	GEngine->AddOnScreenDebugMessage(
 		-1,
 		5.0f,
 		FColor::Red,
-		FString::SanitizeFloat(reletiveStart)
+		FString::SanitizeFloat(startSoundTime)
 	);
-
-	float startSoundTime = reletiveStart - startTraveling; //the amount of time in seconds (till/after) reaching the listener
-	float endSoundTime = reletiveEnd - endTraveling;
 
 	soundTrail[i].lastInterp = soundTrail[i].currentInterp; 
 
