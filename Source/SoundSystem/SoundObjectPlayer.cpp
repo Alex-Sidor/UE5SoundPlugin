@@ -67,8 +67,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	float time = GetWorld()->GetTimeSeconds();
 	
-	
-	if (time - lastSample > sampleTimeInterval) {//create a new sample every x amount of time
+	if (time - lastSample >= sampleTimeInterval) {//create a new sample every x amount of time
 		lastSample = time;
 		createTimeSample(GetComponentLocation(), time);
 	}
