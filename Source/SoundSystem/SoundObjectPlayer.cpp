@@ -18,6 +18,8 @@ USoundObjectPlayer::USoundObjectPlayer()
 		audioComponent->SetupAttachment(this);
 		audioComponent->bAutoActivate = false;
 	}
+
+	PrimaryComponentTick.TickInterval = 0.1f;
 }
 
 void USoundObjectPlayer::BeginPlay()
@@ -87,7 +89,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		);
 	}*/
 
-	playbackSample();
+	playbackSample(PrimaryComponentTick.TickInterval);
 }
 
 void USoundObjectPlayer::createTimeSample(FVector position, float time, float trackTime)
