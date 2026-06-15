@@ -74,6 +74,8 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		createTimeSample(GetComponentLocation(), time, currentTrackTime);
 	}
 
+	float dt1 = 0;
+
 	for(int i = 0; i < soundTrail.Num(); i++){
 		
 		float dt = time - soundTrail[i].time; //difference in time
@@ -85,6 +87,8 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		if (tillDueToStart < 0) {
 			currentSoundSample = soundTrail[i];
 			playing = true;
+
+			dt1 = dt;
 
 			break;
 		}
@@ -106,7 +110,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		);
 	}*/
 
-	playbackSample(PrimaryComponentTick.TickInterval);
+	playbackSample(dt1);
 }
 
 void USoundObjectPlayer::createTimeSample(FVector position, float time, float trackTime)
@@ -157,12 +161,12 @@ void USoundObjectPlayer::playbackSample(float ttl)
 
 		if (GEngine)
 		{
-			/*GEngine->AddOnScreenDebugMessage(
+			GEngine->AddOnScreenDebugMessage(
 				-1,
 				5.0f,
 				FColor::Red,
 				FString::SanitizeFloat(pitch)
-			);*/
+			);
 
 			DrawDebugSphere(
 				GetWorld(),
@@ -183,6 +187,6 @@ void USoundObjectPlayer::HandlePlaybackPercentage(const USoundWave* PlayingSound
 {
 	if (PlayingSoundWave)
 	{
-		float CurrentTimeSeconds = trackLength * PlaybackPercent;
+		currentTrackTime = trackLength * PlaybackPercent;
 	}
 }
