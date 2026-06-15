@@ -37,9 +37,6 @@ void USoundObjectPlayer::BeginPlay()
 
 	maxSoundSamples = sampleLifeLength / sampleTimeInterval;
 
-	for(int i = 0; )
-
-
 	if (audioComponent)
 	{
 		audioComponent->SetVolumeMultiplier(0.0f);
