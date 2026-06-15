@@ -45,9 +45,9 @@ void USoundObjectPlayer::BeginPlay()
 		audioComponent->OnAudioPlaybackPercent.AddDynamic(this, &USoundObjectPlayer::HandlePlaybackPercentage);
 
 		audioComponent->Play();
-	}
 
-	trackLength = CurrentSound->GetDuration();
+		trackLength = CurrentSound->GetDuration();
+	}
 
 	playerRef = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 }
@@ -67,7 +67,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	float time = GetWorld()->GetTimeSeconds();
 
-	currentTrackTime = FMath::Fmod(time, trackLength);
+	currentTrackTime = time;
 	
 	if (time - lastSample >= sampleTimeInterval) {//create a new sample every x amount of time
 		lastSample = time;
@@ -135,7 +135,7 @@ void USoundObjectPlayer::playbackSample(float ttl)
 	if (audioComponent)
 	{
 		FVector pos = currentSoundSample.position;
-		float time = currentSoundSample.time;
+		float time = currentSoundSample.trackTime;
 
 		float pitch = (time - currentPlayingTrackTime) / ttl;
 
