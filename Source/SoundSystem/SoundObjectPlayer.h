@@ -20,9 +20,6 @@ struct FSoundPair {
 
 	UPROPERTY()
 	float time;
-
-	UPROPERTY()
-	float trackTime;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -41,7 +38,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditAnywhere)
-	float speedOfSound = 343;
+	float speedOfSound = 34300;
 
 	UPROPERTY(EditAnywhere)
 	float samplePollingFrequency = 10.0f;
@@ -64,9 +61,6 @@ private:
 	bool playing = false;
 
 	UPROPERTY()
-	float currentPlayingTrackTime = 0;
-
-	UPROPERTY()
 	float sampleTimeInterval = 0.0f;
 	UPROPERTY()
 	int maxSoundSamples = 50;
@@ -81,22 +75,13 @@ private:
 	float trackLength = 0;
 
 	UPROPERTY()
-	float currentTrackTime = 0;
-
-	UPROPERTY()
 	FVector playerPosition = FVector::Zero();
 
-	UPROPERTY()
-	float lastSample = 0.0f;
-
 	UFUNCTION()
-	void createTimeSample(FVector position, float time, float trackTime);
+	void createTimeSample(FVector position, float time);
 
 	UFUNCTION()
 	void playbackSample(float ttl);
-
-	UFUNCTION()
-	void HandlePlaybackPercentage(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
 
 	UPROPERTY()
 	TArray<FSoundPair> soundTrail;
