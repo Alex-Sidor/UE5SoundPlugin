@@ -10,18 +10,13 @@ USoundObjectPlayer::USoundObjectPlayer()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	//PrimaryComponentTick.TickGroup = TG_PostPhysics; //makes it only update after physics
-	
-	for (int i = 0; i < amountOfSoundPlayer; i++) {
-		FName name = *FString::Printf(TEXT("AudioComponent_%d"), i);
 
-		UAudioComponent* NewComp = CreateDefaultSubobject<UAudioComponent>(name);
+	audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 
-		if (NewComp)
-		{
-			NewComp->SetupAttachment(this);
-			NewComp->bAutoActivate = false;
-			audioComponents.Add(NewComp);
-		}
+	if (audioComponent)
+	{
+		audioComponent->SetupAttachment(this);
+		audioComponent->bAutoActivate = false;
 	}
 }
 
@@ -39,15 +34,19 @@ void USoundObjectPlayer::BeginPlay()
 	float sampleLifeLength = maxAttenuationDistance / speedOfSound;
 
 	maxSoundSamples = sampleLifeLength / sampleTimeInterval;
-	
-	for (int i = 0; i < amountOfSoundPlayer; i++) {
-		if (audioComponents[i])
-		{
-			audioComponents[i]->SetSound(CurrentSound);
-			audioComponents[i]->Play();
-			audioComponents[i]->SetVolumeMultiplier(0.0f);
-		}
+
+
+	if (audioComponent)
+	{
+		audioComponent->SetVolumeMultiplier(0.0f);
+		audioComponent->SetSound(CurrentSound);
+
+		audioComponent->OnAudioPlaybackPercent.AddDynamic(this, &USoundObjectPlayer::HandlePlaybackPercentage);
+
+		audioComponent->Play();
 	}
+
+	trackLength = CurrentSound->GetDuration();
 
 	playerRef = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 }
@@ -66,37 +65,16 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	}
 
 	float time = GetWorld()->GetTimeSeconds();
+
+	currentTrackTime = FMath::Fmod(time, trackLength);
 	
 	if (time - lastSample >= sampleTimeInterval) {//create a new sample every x amount of time
 		lastSample = time;
-		createTimeSample(GetComponentLocation(), time);
+		createTimeSample(GetComponentLocation(), time, currentTrackTime);
 	}
-
-	updatePairs(time); //update the cache values of all sound segments
-
-	int amountOfcandidate = 0;
 
 	for (int i = 0; i < soundTrail.Num(); i++) {
-		float currentInterp = soundTrail[i].currentInterp;
-		float lastInterp = soundTrail[i].lastInterp;
-
-		if (0 <= currentInterp && currentInterp <= 1) {
-
-			float dtime = (currentInterp - lastInterp);
-
-			FVector position = interpolatePair(i, currentInterp);
-			playbackSample(position, dtime, amountOfcandidate);
-			
-			amountOfcandidate++;
-			if (amountOfcandidate >= amountOfSoundPlayer) {
-				break;
-			}
-		}
-	}
-
-	//mute the rest of the samples that are not playing
-	for (int i = amountOfcandidate; i < amountOfSoundPlayer; i++) {
-		audioComponents[i]->SetVolumeMultiplier(0.0f);
+		
 	}
 
 	/*if (GEngine)
@@ -108,90 +86,68 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			FString::FromInt(amountOfcandidate)
 		);
 	}*/
+
+	playbackSample();
 }
 
-void USoundObjectPlayer::createTimeSample(FVector position, float time)
+void USoundObjectPlayer::createTimeSample(FVector position, float time, float trackTime)
 {
-
 	if (soundTrail.Num() >= maxSoundSamples && soundTrail.Num() != 0) {
 		soundTrail.RemoveAt(0, EAllowShrinking::No);
 	}
 
 	FSoundPair sp;
 
-	//these never change
-	sp.start = lastPosition;
-	sp.startTime = lastTime;
-
-	//set default values (difference is 0 so this sample has 0 length)
-	sp.end = position;
-	sp.endTime = time;
-
-
-	lastPosition = position;
-	lastTime = time;
+	sp.position = position;
+	sp.time = time;
+	sp.trackTime = trackTime;
 
 	soundTrail.Add(sp);
 }
 
-void USoundObjectPlayer::updatePairs(float time)
+
+void USoundObjectPlayer::playbackSample(float ttl)
 {
-	for (int i = 0; i < soundTrail.Num(); i++) {
-		updatePair(i, time);
+	if (!currentSoundSample) {
+		return;
 	}
-}
 
-void USoundObjectPlayer::updatePair(int i, float time)
-{	
-	float startTraveling = time - soundTrail[i].startTime; //how long in seconds have the sample points been travelling towards the audio listener
-	float endTraveling = time - soundTrail[i].endTime;
-
-	float reletiveStart = (soundTrail[i].start - playerPosition).Length() / speedOfSound; //how long in seconds it would take for each sample to reach the listener
-	float reletiveEnd = (soundTrail[i].end - playerPosition).Length() / speedOfSound;
-
-	float startSoundTime = reletiveStart - startTraveling; //the amount of time in seconds (till/after) reaching the listener
-	float endSoundTime = reletiveEnd - endTraveling;
-
-	/*GEngine->AddOnScreenDebugMessage(
-		-1,
-		5.0f,
-		FColor::Red,
-		FString::SanitizeFloat(startSoundTime)
-	);*/
-
-	soundTrail[i].lastInterp = soundTrail[i].currentInterp; 
-
-	// (end - start)*currentInterp + start == 0
-	// -start/(end-start) = currentInterp
-	// start / (start - end )
-
-	soundTrail[i].currentInterp = startSoundTime / (startSoundTime - endSoundTime);
-
-}
-
-FVector USoundObjectPlayer::interpolatePair(int i, float interp)
-{
-	FVector vec = soundTrail[i].end + (interp * (soundTrail[i].start - soundTrail[i].end));
-
-	return vec;
-}
-
-void USoundObjectPlayer::playbackSample(FVector position, float pitch, int index)
-{
-	if (audioComponents[index])
+	if (audioComponent)
 	{
+		FVector pos = currentSoundSample->position;
+		float time = currentSoundSample->time;
+
+		float pitch = (time - currentPlayingTrackTime) / ttl;
+
+		pitch = log2f(pitch) * 12; // convert from speed into octaves
+
+		audioComponent->SetWorldLocation(pos);
+
+		FAudioParameter speedParam;
+		speedParam.ParamName = pitchParamName;
+
+		speedParam.FloatParam = pitch;
+		speedParam.ParamType = EAudioParameterType::Float;
+
+		audioComponent->SetParameter(MoveTemp(speedParam));
+
+		//audioComponent->SetVolumeMultiplier(1.0f);
+
+
+		//Debug
+
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(
+			/*GEngine->AddOnScreenDebugMessage(
 				-1,
 				5.0f,
 				FColor::Red,
 				FString::SanitizeFloat(pitch)
-			);
+			);*/
 
 			DrawDebugSphere(
 				GetWorld(),
-				position,
+				pos,
 				500.0f,
 				16,
 				FColor::Red,
@@ -201,16 +157,13 @@ void USoundObjectPlayer::playbackSample(FVector position, float pitch, int index
 				2.0f
 			);
 		}
+	}
+}
 
-		audioComponents[index]->SetWorldLocation(position);
-
-		FAudioParameter speedParam;
-		speedParam.ParamName = pitchParamName;
-		speedParam.FloatParam = log2f(pitch) * 12;
-		speedParam.ParamType = EAudioParameterType::Float;
-
-		audioComponents[index]->SetParameter(MoveTemp(speedParam));
-
-		audioComponents[index]->SetVolumeMultiplier(1.0f);
+void USoundObjectPlayer::HandlePlaybackPercentage(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
+{
+	if (PlayingSoundWave)
+	{
+		float CurrentTimeSeconds = trackLength * PlaybackPercent;
 	}
 }

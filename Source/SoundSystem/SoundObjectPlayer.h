@@ -16,21 +16,13 @@ struct FSoundPair {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FVector start;
-	UPROPERTY()
-	FVector end;
-
+	FVector position;
 
 	UPROPERTY()
-	float startTime;
-	UPROPERTY()
-	float endTime;
-
+	float time;
 
 	UPROPERTY()
-	float currentInterp = 0;
-	UPROPERTY()
-	float lastInterp = 0;
+	float trackTime;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -57,9 +49,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	float maxAttenuationDistance = 300.0f;
 
-	UPROPERTY(EditAnywhere)
-	int amountOfSoundPlayer = 10;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	USoundBase* CurrentSound;
 
@@ -69,45 +58,42 @@ public:
 private:
 
 	UPROPERTY()
-	float sampleTimeInterval = 0.0f;
+	FSoundPair* currentSoundSample = nullptr;
 
 	UPROPERTY()
+	float currentPlayingTrackTime = 0;
+
+	UPROPERTY()
+	float sampleTimeInterval = 0.0f;
+	UPROPERTY()
 	int maxSoundSamples = 50;
+
+	UPROPERTY()
+	UAudioComponent* audioComponent;
 
 	UPROPERTY()
 	AActor* playerRef = nullptr;
 
 	UPROPERTY()
+	float trackLength = 0;
+
+	UPROPERTY()
+	float currentTrackTime = 0;
+
+	UPROPERTY()
 	FVector playerPosition = FVector::Zero();
-
-	//for creating new samples
-	UPROPERTY()
-	FVector lastPosition = FVector::Zero();
-
-	UPROPERTY()
-	float lastTime = 0;
-	//------------
 
 	UPROPERTY()
 	float lastSample = 0.0f;
 
 	UFUNCTION()
-	void createTimeSample(FVector position, float time);
+	void createTimeSample(FVector position, float time, float trackTime);
 
 	UFUNCTION()
-	void updatePairs(float time);
+	void playbackSample(float ttl);
 
 	UFUNCTION()
-	void updatePair(int i, float time);
-
-	UFUNCTION()
-	FVector interpolatePair(int i, float interp);
-
-	UPROPERTY()
-	TArray <UAudioComponent*> audioComponents;
-
-	UFUNCTION()
-	void playbackSample(FVector position, float pitch, int index);
+	void HandlePlaybackPercentage(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
 
 	UPROPERTY()
 	TArray<FSoundPair> soundTrail;
