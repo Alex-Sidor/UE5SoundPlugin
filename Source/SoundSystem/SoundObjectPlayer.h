@@ -61,6 +61,9 @@ private:
 	FSoundPair currentSoundSample;
 
 	UPROPERTY()
+	bool playing = false;
+
+	UPROPERTY()
 	float currentPlayingTrackTime = 0;
 
 	UPROPERTY()

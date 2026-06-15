@@ -110,14 +110,15 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time, float tr
 
 void USoundObjectPlayer::playbackSample(float ttl)
 {
-	if (!currentSoundSample) {
+	if (!playing) {
+		audioComponent->SetVolumeMultiplier(0.0f);
 		return;
 	}
 
 	if (audioComponent)
 	{
-		FVector pos = currentSoundSample->position;
-		float time = currentSoundSample->time;
+		FVector pos = currentSoundSample.position;
+		float time = currentSoundSample.time;
 
 		float pitch = (time - currentPlayingTrackTime) / ttl;
 
@@ -133,8 +134,7 @@ void USoundObjectPlayer::playbackSample(float ttl)
 
 		audioComponent->SetParameter(MoveTemp(speedParam));
 
-		//audioComponent->SetVolumeMultiplier(1.0f);
-
+		audioComponent->SetVolumeMultiplier(1.0f);
 
 		//Debug
 
