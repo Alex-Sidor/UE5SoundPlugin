@@ -74,7 +74,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		createTimeSample(GetComponentLocation(), time, currentTrackTime);
 	}
 
-	float dt1 = 0;
+	float ttl = 1;
 
 	for(int i = 0; i < soundTrail.Num(); i++){
 		
@@ -82,13 +82,13 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 		float dp = (soundTrail[i].position - playerPosition).Length(); //difference in position
 
-		float tillDueToStart = dt - (dp * speedOfSound);
+		float tillDueToStart = dt - (dp / speedOfSound);
 
 		if (tillDueToStart < 0) {
 			currentSoundSample = soundTrail[i];
 			playing = true;
 
-			dt1 = dt;
+			ttl = time - (dp / speedOfSound);
 
 			break;
 		}
@@ -110,7 +110,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		);
 	}*/
 
-	playbackSample(dt1);
+	playbackSample(ttl);
 }
 
 void USoundObjectPlayer::createTimeSample(FVector position, float time, float trackTime)
@@ -131,6 +131,16 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time, float tr
 
 void USoundObjectPlayer::playbackSample(float ttl)
 {
+	static float ttlLast = 0;
+	FVector pos = currentSoundSample.position;
+	float time = currentSoundSample.trackTime;
+	float ddt = (ttl - ttlLast)/ PrimaryComponentTick.TickInterval;
+	ttlLast = ttl;
+
+	if (ddt < 0) {
+		return; // add support for playing sound backwards
+	}
+
 	if (!playing) {
 		audioComponent->SetVolumeMultiplier(0.0f);
 		return;
@@ -138,12 +148,10 @@ void USoundObjectPlayer::playbackSample(float ttl)
 
 	if (audioComponent)
 	{
-		FVector pos = currentSoundSample.position;
-		float time = currentSoundSample.trackTime;
 
-		float pitch = (time - currentPlayingTrackTime) / ttl;
+		float pitch = ddt;
 
-		pitch = log2f(pitch) * 12; // convert from speed into octaves
+		pitch = log2f(ddt) * 12; // convert from speed into octaves
 
 		audioComponent->SetWorldLocation(pos);
 
@@ -165,7 +173,7 @@ void USoundObjectPlayer::playbackSample(float ttl)
 				-1,
 				5.0f,
 				FColor::Red,
-				FString::SanitizeFloat(pitch)
+				FString::SanitizeFloat(ddt)
 			);
 
 			DrawDebugSphere(
