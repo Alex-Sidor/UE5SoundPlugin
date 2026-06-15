@@ -89,7 +89,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			break;
 		}
 
-		if (i = soundTrail.Num()) {
+		if (i == soundTrail.Num()) {
 			// couldn't find any sound
 
 			playing = false;
