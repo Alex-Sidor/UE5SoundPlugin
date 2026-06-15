@@ -37,6 +37,8 @@ void USoundObjectPlayer::BeginPlay()
 
 	maxSoundSamples = sampleLifeLength / sampleTimeInterval;
 
+	for(int i = 0; )
+
 
 	if (audioComponent)
 	{
@@ -75,8 +77,26 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		createTimeSample(GetComponentLocation(), time, currentTrackTime);
 	}
 
-	for (int i = 0; i < soundTrail.Num(); i++) {
+	for(int i = 0; i < soundTrail.Num(); i++){
 		
+		float dt = time - soundTrail[i].time; //difference in time
+
+		float dp = (soundTrail[i].position - playerPosition).Length(); //difference in position
+
+		float tillDueToStart = dt - (dp * speedOfSound);
+
+		if (tillDueToStart < 0) {
+			currentSoundSample = soundTrail[i];
+			playing = true;
+
+			break;
+		}
+
+		if (i = soundTrail.Num()) {
+			// couldn't find any sound
+
+			playing = false;
+		}
 	}
 
 	/*if (GEngine)
