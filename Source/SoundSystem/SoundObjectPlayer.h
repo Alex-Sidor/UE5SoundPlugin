@@ -58,7 +58,7 @@ public:
 private:
 
 	UPROPERTY()
-	FSoundPair* currentSoundSample = nullptr;
+	FSoundPair currentSoundSample;
 
 	UPROPERTY()
 	float currentPlayingTrackTime = 0;
