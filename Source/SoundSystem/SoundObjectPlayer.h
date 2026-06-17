@@ -11,7 +11,7 @@
 #include "SoundObjectPlayer.generated.h"
 
 USTRUCT()
-struct FSoundPair {
+struct FSoundSample {
 
 	GENERATED_BODY()
 
@@ -20,6 +20,9 @@ struct FSoundPair {
 
 	UPROPERTY()
 	float time;
+
+	UPROPERTY()
+	FVector movement;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -46,6 +49,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float maxAttenuationDistance = 300.0f;
 
+	UPROPERTY(EditAnywhere)
+	int numberOfSoundPlayers = 3;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
 	USoundBase* CurrentSound;
 
@@ -53,23 +59,29 @@ public:
 	FName pitchParamName = TEXT("pitch");
 
 private:
+	
+	//data
 
 	UPROPERTY()
-	FSoundPair currentSoundSample;
+	TArray<FSoundSample> soundQueue;
+	// sound samples get put in here if they are due to play
+	// every audio player plays their sample. e.g sound player 1 always plays whatever is in sample 1, sound player 2, in sample 2 ect...
+	// items get put in by whatever slot is free first, if it cannot be put in, it doesn't play.
 
 	UPROPERTY()
-	bool playing = false;
+	TArray<FSoundSample> soundTrail;
 
 	UPROPERTY()
-	float sampleTimeInterval = 0.0f;
-	UPROPERTY()
-	int maxSoundSamples = 50;
-
-	UPROPERTY()
-	UAudioComponent* audioComponent;
+	TArray<UAudioComponent> audioComponent;
 
 	UPROPERTY()
 	AActor* playerRef = nullptr;
+
+
+	//useful math numbers
+
+	UPROPERTY()
+	float sampleTimeInterval = 0.0f;
 
 	UPROPERTY()
 	float trackLength = 0;
@@ -77,12 +89,21 @@ private:
 	UPROPERTY()
 	FVector playerPosition = FVector::Zero();
 
-	UFUNCTION()
-	void createTimeSample(FVector position, float time);
-
-	UFUNCTION()
-	void playbackSample(float ttl);
-
 	UPROPERTY()
-	TArray<FSoundPair> soundTrail;
+	FVector playerMovementVector = FVector::Zero();
+
+	//funcs
+
+	UFUNCTION()
+	void createTimeSample(FVector position, float time, float dt);
+
+	UFUNCTION()
+	void playbackSample(float ttl, float dt);
+
+	UFUNCTION()
+	void addToQueue(FSoundSample sound);
+
+	UFUNCTION()
+	float getDopplerShift(FVector p0, FVector v0, FVector p1, FVector v1);
+
 };

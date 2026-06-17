@@ -35,8 +35,6 @@ void USoundObjectPlayer::BeginPlay()
 
 	float sampleLifeLength = maxAttenuationDistance / speedOfSound;
 
-	maxSoundSamples = sampleLifeLength / sampleTimeInterval;
-
 	if (audioComponent)
 	{
 		audioComponent->SetVolumeMultiplier(0.0f);
@@ -63,73 +61,80 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	if (playerRef)
 	{
 		playerPosition = playerRef->GetActorLocation();
+		playerMovementVector = playerRef->GetVelocity();
 	}
 
 	float time = GetWorld()->GetTimeSeconds();
 
-	createTimeSample(GetComponentLocation(), time);
+	createTimeSample(GetComponentLocation(), time, DeltaTime);
 
-	float ttl = 1;
-
-	for(int i = 0; i < soundTrail.Num(); i++){
-		
-		float dt = time - soundTrail[i].time; //difference in time
-
-		float dp = (soundTrail[i].position - playerPosition).Length(); //difference in position
-
+	for (int i = soundTrail.Num() - 1; i >= 0; i--)
+	{
+		float dt = time - soundTrail[i].time;
+		float dp = (soundTrail[i].position - playerPosition).Length();
 		float soundTime = (dp / speedOfSound);
 
-		float tillDueToStart = dt - soundTime;
+		if (dt >= soundTime)
+		{
+			addToQueue(soundTrail[i]);
 
-		if (tillDueToStart < 0) {
-			currentSoundSample = soundTrail[i];
-			playing = true;
-
-			ttl = time - soundTime;
+			soundTrail.RemoveAt(i);
 
 			break;
 		}
-
-		if (i == soundTrail.Num()) {
-			// couldn't find any sound
-
-			playing = false;
-		}
 	}
 
-	playbackSample(ttl);
+
+
+	playbackSample(DeltaTime);
 }
 
-void USoundObjectPlayer::createTimeSample(FVector position, float time)
+void USoundObjectPlayer::createTimeSample(FVector position, float time, float dt)
 {
-	if (soundTrail.Num() >= maxSoundSamples && soundTrail.Num() != 0) {
-		soundTrail.RemoveAt(0, EAllowShrinking::No);
-	}
+	static FVector pos = FVector::Zero();
 
-	FSoundPair sp;
+	FVector change = position - pos;
+	pos = position;
+
+	FSoundSample sp;
 
 	sp.position = position;
 	sp.time = time;
+	sp.movement = change;
 
 	soundTrail.Add(sp);
 }
 
 
-void USoundObjectPlayer::playbackSample(float ttl)
+void USoundObjectPlayer::playbackSample(float ttl, float dt)
 {
+	static float trackedTime = 0;
+
 	static float ttlLast = 0;
-	FVector pos = currentSoundSample.position;
-	float time = currentSoundSample.time;
-	float ddt = (ttl - ttlLast)/ PrimaryComponentTick.TickInterval;
+
+
+	for (int i = soundQueue.Num() - 1; i >= 0; i--)
+	{
+		
+	}
+
+
+	FVector pos = currentSoundSampleposition;
+	FVector movement = currentSoundSample->movement;
+	float time = currentSoundSample->time;
+
+	float ddt = (ttl - ttlLast)/ dt;
 	ttlLast = ttl;
+
+	float p = 1 - FMath::Fmod(trackedTime, sampleTimeInterval);
+
+	FVector newPos = pos - movement * p;
 
 	if (ddt < 0) {
 		return; // add support for playing sound backwards
 	}
 
 	if (!playing) {
-		audioComponent->SetVolumeMultiplier(0.0f);
-
 		FAudioParameter speedParam;
 		speedParam.ParamName = pitchParamName;
 
@@ -146,9 +151,11 @@ void USoundObjectPlayer::playbackSample(float ttl)
 
 		float pitch = ddt;
 
+		trackedTime += dt * pitch;
+
 		pitch = log2f(ddt) * 12; // convert from speed into octaves
 
-		audioComponent->SetWorldLocation(pos);
+		audioComponent->SetWorldLocation(newPos);
 
 		FAudioParameter speedParam;
 		speedParam.ParamName = pitchParamName;
@@ -159,5 +166,34 @@ void USoundObjectPlayer::playbackSample(float ttl)
 		audioComponent->SetParameter(MoveTemp(speedParam));
 
 		audioComponent->SetVolumeMultiplier(1.0f);
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+				-1,
+				5.0f,
+				FColor::Red,
+				FString::SanitizeFloat(ddt)
+			);
+		}
 	}
+}
+
+void USoundObjectPlayer::addToQueue(FSoundSample sound) {
+	for (int i = 0; i < numberOfSoundPlayers; i++) {
+		if (soundQueue[i].marked) {
+			soundQueue[i] = sound;
+		}
+	}
+}
+
+float USoundObjectPlayer::getDopplerShift(FVector p0, FVector v0, FVector p1, FVector v1) {
+	
+	FVector soundDir = (p1 - p0).GetSafeNormal();
+
+	FVector velocity = (v0 - v1) / 100.0f;
+	
+	float rel = FVector::DotProduct(velocity, soundDir);
+
+	return (speedOfSound + rel) / FMath::Max(0.001f, speedOfSound); // doppler equasion
 }
