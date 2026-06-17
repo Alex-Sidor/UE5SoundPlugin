@@ -84,8 +84,6 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			addToQueue(soundTrail[i]);
 
 			soundTrail.RemoveAt(i);
-
-			break;
 		}
 	}
 
@@ -141,6 +139,10 @@ void USoundObjectPlayer::playSamples(float dt)
 void USoundObjectPlayer::addToQueue(FSoundSample sound) {
 	for (int i = 0; i < numberOfSoundPlayers; i++) {
 		if (soundQueue[i].status == ESampleStatus::Finished) {
+
+			soundQueue[i].status = ESampleStatus::Waiting;
+			soundQueue[i].interp = 0;
+
 			soundQueue[i] = sound;
 			break;
 		}

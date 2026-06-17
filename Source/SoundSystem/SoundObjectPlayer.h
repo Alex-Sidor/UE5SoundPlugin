@@ -36,7 +36,7 @@ struct FSoundSample {
 	ESampleStatus status = ESampleStatus::Waiting;
 
 	UPROPERTY()
-	float interp;
+	float interp = 0;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
