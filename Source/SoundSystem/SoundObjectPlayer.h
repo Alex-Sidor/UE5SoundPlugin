@@ -10,6 +10,14 @@
 
 #include "SoundObjectPlayer.generated.h"
 
+UENUM(BlueprintType)
+enum class ESampleStatus : uint8
+{
+	Waiting = 0,
+	Started = 1,
+	Finished = 2
+};
+
 USTRUCT()
 struct FSoundSample {
 
@@ -23,6 +31,12 @@ struct FSoundSample {
 
 	UPROPERTY()
 	FVector movement;
+
+	UPROPERTY()
+	ESampleStatus status = ESampleStatus::Waiting;
+
+	UPROPERTY()
+	float interp;
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -72,7 +86,7 @@ private:
 	TArray<FSoundSample> soundTrail;
 
 	UPROPERTY()
-	TArray<UAudioComponent> audioComponent;
+	TArray<UAudioComponent*> audioComponents;
 
 	UPROPERTY()
 	AActor* playerRef = nullptr;
@@ -98,7 +112,7 @@ private:
 	void createTimeSample(FVector position, float time, float dt);
 
 	UFUNCTION()
-	void playbackSample(float ttl, float dt);
+	void playSamples(float dt);
 
 	UFUNCTION()
 	void addToQueue(FSoundSample sound);
@@ -106,4 +120,12 @@ private:
 	UFUNCTION()
 	float getDopplerShift(FVector p0, FVector v0, FVector p1, FVector v1);
 
+	UFUNCTION()
+	void setPitch(float p, int i);
+
+	UFUNCTION()
+	void setTrack(float t, int i);
+
+	UFUNCTION()
+	void setPosition(FVector p, int i);
 };

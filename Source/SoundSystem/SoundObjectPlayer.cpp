@@ -11,14 +11,6 @@ USoundObjectPlayer::USoundObjectPlayer()
 	PrimaryComponentTick.bCanEverTick = true;
 	//PrimaryComponentTick.TickGroup = TG_PostPhysics; //makes it only update after physics
 
-	audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
-
-	if (audioComponent)
-	{
-		audioComponent->SetupAttachment(this);
-		audioComponent->bAutoActivate = false;
-	}
-
 	PrimaryComponentTick.TickInterval = 0.1f;
 }
 
@@ -35,14 +27,27 @@ void USoundObjectPlayer::BeginPlay()
 
 	float sampleLifeLength = maxAttenuationDistance / speedOfSound;
 
-	if (audioComponent)
+	for (int i = 0; i < numberOfSoundPlayers; i++)
 	{
-		audioComponent->SetVolumeMultiplier(0.0f);
-		audioComponent->SetSound(CurrentSound);
+		FSoundSample EmptySample;
+		EmptySample.status = ESampleStatus::Finished;
+		soundQueue.Add(EmptySample);
+	}
 
-		audioComponent->Play();
+	for (int i = 0; i < numberOfSoundPlayers; i++) {
+		FName name = *FString::Printf(TEXT("AudioComponent_%d"), i);
 
-		trackLength = CurrentSound->GetDuration();
+		UAudioComponent* NewComp = NewObject<UAudioComponent>(this, name);
+
+		if (NewComp)
+		{
+			NewComp->RegisterComponent();
+			NewComp->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+			NewComp->bAutoActivate = false;
+			NewComp->SetSound(CurrentSound);
+
+			audioComponents.Add(NewComp);
+		}
 	}
 
 	playerRef = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -84,9 +89,7 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		}
 	}
 
-
-
-	playbackSample(DeltaTime);
+	playSamples(DeltaTime);
 }
 
 void USoundObjectPlayer::createTimeSample(FVector position, float time, float dt)
@@ -106,83 +109,40 @@ void USoundObjectPlayer::createTimeSample(FVector position, float time, float dt
 }
 
 
-void USoundObjectPlayer::playbackSample(float ttl, float dt)
+void USoundObjectPlayer::playSamples(float dt)
 {
-	static float trackedTime = 0;
+	
+	for (int i = soundQueue.Num() - 1; i >= 0; i--){
+		if (soundQueue[i].status == ESampleStatus::Waiting) {
+			setTrack(soundQueue[i].time, i);
+			soundQueue[i].status = ESampleStatus::Started;
+		}
 
-	static float ttlLast = 0;
+		if (soundQueue[i].status == ESampleStatus::Started) {
 
+			soundQueue[i].interp += dt;
 
-	for (int i = soundQueue.Num() - 1; i >= 0; i--)
-	{
-		
-	}
+			FVector soundPos = (soundQueue[i].interp * soundQueue[i].movement) + soundQueue[i].position;
 
+			float pitch = getDopplerShift(soundPos, soundQueue[i].movement / dt, playerPosition, playerMovementVector);
 
-	FVector pos = currentSoundSampleposition;
-	FVector movement = currentSoundSample->movement;
-	float time = currentSoundSample->time;
+			setPitch(pitch, i);
+			
+			setPosition(soundPos, i);
 
-	float ddt = (ttl - ttlLast)/ dt;
-	ttlLast = ttl;
-
-	float p = 1 - FMath::Fmod(trackedTime, sampleTimeInterval);
-
-	FVector newPos = pos - movement * p;
-
-	if (ddt < 0) {
-		return; // add support for playing sound backwards
-	}
-
-	if (!playing) {
-		FAudioParameter speedParam;
-		speedParam.ParamName = pitchParamName;
-
-		speedParam.FloatParam = -INFINITY;
-		speedParam.ParamType = EAudioParameterType::Float;
-
-		audioComponent->SetParameter(MoveTemp(speedParam));
-
-		return;
-	}
-
-	if (audioComponent)
-	{
-
-		float pitch = ddt;
-
-		trackedTime += dt * pitch;
-
-		pitch = log2f(ddt) * 12; // convert from speed into octaves
-
-		audioComponent->SetWorldLocation(newPos);
-
-		FAudioParameter speedParam;
-		speedParam.ParamName = pitchParamName;
-
-		speedParam.FloatParam = pitch;
-		speedParam.ParamType = EAudioParameterType::Float;
-
-		audioComponent->SetParameter(MoveTemp(speedParam));
-
-		audioComponent->SetVolumeMultiplier(1.0f);
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				5.0f,
-				FColor::Red,
-				FString::SanitizeFloat(ddt)
-			);
+			if (soundQueue[i].interp > sampleTimeInterval) {
+				audioComponents[i]->Stop();
+				soundQueue[i].status = ESampleStatus::Finished;
+			}
 		}
 	}
 }
 
 void USoundObjectPlayer::addToQueue(FSoundSample sound) {
 	for (int i = 0; i < numberOfSoundPlayers; i++) {
-		if (soundQueue[i].marked) {
+		if (soundQueue[i].status == ESampleStatus::Finished) {
 			soundQueue[i] = sound;
+			break;
 		}
 	}
 }
@@ -196,4 +156,25 @@ float USoundObjectPlayer::getDopplerShift(FVector p0, FVector v0, FVector p1, FV
 	float rel = FVector::DotProduct(velocity, soundDir);
 
 	return (speedOfSound + rel) / FMath::Max(0.001f, speedOfSound); // doppler equasion
+}
+
+void USoundObjectPlayer::setPitch(float p, int i)
+{
+	FAudioParameter speedParam;
+	speedParam.ParamName = pitchParamName;
+	speedParam.FloatParam = log2f(p) * 12;
+	speedParam.ParamType = EAudioParameterType::Float;
+
+	audioComponents[i]->SetParameter(MoveTemp(speedParam));
+
+	//audioComponents[index]->SetVolumeMultiplier(1.0f);
+}
+
+void USoundObjectPlayer::setPosition(FVector p, int i) {
+	audioComponents[i]->SetWorldLocation(p);
+}
+
+void USoundObjectPlayer::setTrack(float p, int i)
+{
+	audioComponents[i]->Play(p);
 }
