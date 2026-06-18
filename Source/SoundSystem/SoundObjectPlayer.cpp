@@ -109,6 +109,8 @@ void USoundObjectPlayer::playSamples(float dt)
 {
 	
 	for (int i = soundQueue.Num() - 1; i >= 0; i--){
+		if (!audioComponents.IsValidIndex(i)) continue;
+		
 		if (soundQueue[i].status == ESampleStatus::Waiting) {
 			setTrack(soundQueue[i].time, i);
 			soundQueue[i].status = ESampleStatus::Started;
