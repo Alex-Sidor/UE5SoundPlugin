@@ -27,6 +27,8 @@ void USoundObjectPlayer::BeginPlay()
 
 	float sampleLifeLength = maxAttenuationDistance / speedOfSound;
 
+	lifeLength = maxAttenuationDistance / speedOfSound;
+
 	for (int i = 0; i < numberOfSoundPlayers; i++)
 	{
 		FSoundSample EmptySample;
@@ -77,7 +79,15 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	{
 		float dt = time - soundTrail[i].time;
 		float dp = (soundTrail[i].position - playerPosition).Length();
+
 		float soundTime = (dp / speedOfSound);
+
+		if (dt > lifeLength)
+		{
+			soundTrail.RemoveAt(i);
+			continue;
+		}
+
 
 		if (dt >= soundTime)
 		{

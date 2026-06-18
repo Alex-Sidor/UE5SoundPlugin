@@ -109,6 +109,9 @@ private:
 	UPROPERTY()
 	FVector playerMovementVector = FVector::Zero();
 
+	UPROPERTY()
+	float lifeLength = 1;
+
 	//funcs
 
 	UFUNCTION()
