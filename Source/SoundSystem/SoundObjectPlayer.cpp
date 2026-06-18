@@ -88,7 +88,6 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			continue;
 		}
 
-
 		if (dt >= soundTime)
 		{
 			addToQueue(soundTrail[i]);
@@ -128,25 +127,38 @@ void USoundObjectPlayer::playSamples(float dt)
 
 		if (soundQueue[i].status == ESampleStatus::Started) {
 
+			if (soundQueue[i].interp > sampleTimeInterval) {
+				//audioComponents[i]->Stop();
+				setPitch(-INFINITY, i);
+				soundQueue[i].status = ESampleStatus::Finished;
+			}
+
 			soundQueue[i].interp += dt;
 
 			FVector soundPos = (soundQueue[i].interp * soundQueue[i].movement) + soundQueue[i].position;
 
-			float pitch = getDopplerShift(soundPos, soundQueue[i].movement / dt, playerPosition, playerMovementVector);
+			float pitch = getDopplerShift(soundPos, soundQueue[i].movement / sampleTimeInterval, playerPosition, playerMovementVector);
+
+			if (GEngine)
+			{
+				GEngine->AddOnScreenDebugMessage(
+					1,
+					0.0f,
+					FColor::Cyan,
+					FString::Printf(TEXT("Float per frame: %.2f"), pitch)
+				);
+			}
 
 			setPitch(pitch, i);
 			
 			setPosition(soundPos, i);
 
-			if (soundQueue[i].interp > sampleTimeInterval) {
-				audioComponents[i]->Stop();
-				soundQueue[i].status = ESampleStatus::Finished;
-			}
 		}
 	}
 }
 
 void USoundObjectPlayer::addToQueue(FSoundSample sound) {
+	
 	for (int i = 0; i < numberOfSoundPlayers; i++) {
 		if (soundQueue[i].status == ESampleStatus::Finished) {
 
@@ -164,7 +176,7 @@ float USoundObjectPlayer::getDopplerShift(FVector p0, FVector v0, FVector p1, FV
 	
 	FVector soundDir = (p1 - p0).GetSafeNormal();
 
-	FVector velocity = (v0 - v1) / 100.0f;
+	FVector velocity = (v0 - v1);
 	
 	float rel = FVector::DotProduct(velocity, soundDir);
 
@@ -189,5 +201,5 @@ void USoundObjectPlayer::setPosition(FVector p, int i) {
 
 void USoundObjectPlayer::setTrack(float p, int i)
 {
-	audioComponents[i]->Play(p);
+	audioComponents[i]->Play();
 }
