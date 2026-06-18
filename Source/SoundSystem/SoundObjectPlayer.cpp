@@ -92,10 +92,8 @@ void USoundObjectPlayer::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void USoundObjectPlayer::createTimeSample(FVector position, float time, float dt)
 {
-	static FVector pos = FVector::Zero();
-
-	FVector change = position - pos;
-	pos = position;
+	FVector change = position - lastPosition;
+	lastPosition = position;
 
 	FSoundSample sp;
 
@@ -140,10 +138,11 @@ void USoundObjectPlayer::addToQueue(FSoundSample sound) {
 	for (int i = 0; i < numberOfSoundPlayers; i++) {
 		if (soundQueue[i].status == ESampleStatus::Finished) {
 
+			soundQueue[i] = sound;
+
 			soundQueue[i].status = ESampleStatus::Waiting;
 			soundQueue[i].interp = 0;
 
-			soundQueue[i] = sound;
 			break;
 		}
 	}

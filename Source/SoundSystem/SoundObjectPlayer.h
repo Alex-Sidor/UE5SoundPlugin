@@ -91,6 +91,9 @@ private:
 	UPROPERTY()
 	AActor* playerRef = nullptr;
 
+	UPROPERTY()
+	FVector lastPosition = FVector::Zero();
+
 
 	//useful math numbers
 
